@@ -1,0 +1,168 @@
+/* General Body Styles */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #1a1a2e; /* Dark background */
+  color: #e0e0e0; /* Light text */
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align items to the start to prevent vertical centering on short content */
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header Styles */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2.8em;
+  color: #00bcd4; /* Cyan for emphasis */
+  margin-bottom: 10px;
+}
+
+header p {
+  font-size: 1.1em;
+  color: #b0b0b0;
+}
+
+/* Section Styles (Emoji Selector, Prompt Input, Output Display) */
+.section-container {
+  background-color: #2a2a4a; /* Slightly lighter dark background for sections */
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.section-container h2 {
+  font-size: 1.8em;
+  color: #00bcd4;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 188, 212, 0.3);
+  padding-bottom: 10px;
+}
+
+/* Emoji Selector Grid */
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 10px;
+}
+
+.emoji-button {
+  background-color: #3a3a5a;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 2em;
+cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emoji-button:hover {
+  background-color: #4a4a6a;
+  transform: scale(1.05);
+}
+
+.emoji-button.selected {
+  background-color: #00bcd4;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+}
+
+/* Textarea Styles */
+textarea {
+  width: 100%;
+  padding: 15px;
+  background-color: #3a3a5a;
+  border: 1px solid #5a5a7a;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 1em;
+  resize: vertical;
+  min-height: 100px;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #00bcd4;
+  box-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
+}
+
+/* Copy Button */
+.copy-button-container {
+  position: relative;
+  margin-top: 15px; /* Space between textarea and button */
+}
+
+.copy-button {
+  background-color: #00bcd4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.2s ease-in-out;
+  width: 100%; /* Make button full width */
+}
+
+.copy-button:hover:not(:disabled) {
+  background-color: #0097a7;
+}
+
+.copy-button:disabled {
+  background-color: #5a5a7a;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error-message {
+  color: #ff6b6b; /* Red for errors */
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  color: #808080;
+  font-size: 0.9em;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2em;
+  }
+
+  .section-container {
+    padding: 15px;
+  }
+
+  .section-container h2 {
+    font-size: 1.5em;
+  }
+
+  .emoji-button {
+    font-size: 1.5em;
+    padding: 8px;
+  }
+}
