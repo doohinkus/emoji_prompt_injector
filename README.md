@@ -1,6 +1,6 @@
 # Emoji Prompt Injector
 
-Invisibly encode AI prompts inside emojis using Unicode steganography.
+Invisibly encode AI prompts inside emojis using Unicode steganography. Paste the emoji into an AI chat. The AI will read and respond to the secret prompt.
 
 ## What It Does
 
@@ -21,13 +21,22 @@ npm run preview  # Preview production build
 
 ## Step-by-Step Usage
 
+## Live Demo
+
+### https://inject.bluespicemachine.org/
+
+![Screenshot](./screenshot.png)
+
 ### Step 1: Select an Emoji
+
 Click any emoji in the grid (e.g., `🚀`, `✨`, `✅`). The selected emoji is highlighted in cyan.
 
 ### Step 2: Enter Your Prompt
+
 Type your prompt in the text area. Only **letters (A–Z)**, **digits (0–9)**, and **spaces** are allowed. Other characters will cause an error.
 
 ### Step 3: Copy the Encoded Result
+
 The output area shows your selected emoji followed by invisible tag characters. Click **Copy** to copy the encoded string to your clipboard. Use this anywhere — paste it into ChatGPT, Claude, an API call, etc.
 
 > **Tip:** The encoded string looks like just a single emoji, but the hidden text travels with it.
@@ -56,14 +65,15 @@ The LLM Optimized Encoder (`src/utils/llmOptimizedEncoder.ts`) also includes bui
 
 ## Technical Detail
 
-| Component | Range |
-|---|---|
-| Tag character base | `U+E0000` |
-| Tag character max | `U+E007F` |
-| Encodable range per char | `U+0000` to `U+007F` (basic ASCII) |
-| Supported input | A–Z, 0–9, space (original encoder); broader ASCII (LLM encoder) |
+| Component                | Range                                                           |
+| ------------------------ | --------------------------------------------------------------- |
+| Tag character base       | `U+E0000`                                                       |
+| Tag character max        | `U+E007F`                                                       |
+| Encodable range per char | `U+0000` to `U+007F` (basic ASCII)                              |
+| Supported input          | A–Z, 0–9, space (original encoder); broader ASCII (LLM encoder) |
 
 The app ships with two encoders:
+
 - **Original encoder** (`emojiEncoder.ts`) — strict A–Z, 0–9, space only
 - **LLM Optimized encoder** (`llmOptimizedEncoder.ts`) — broader ASCII support, batch encoding, decode methods, and prompt patterns
 
@@ -75,7 +85,8 @@ Toggle between them via `USE_LLM_OPTIMIZED_ENCODER` in `src/App.tsx`.
 - **Vite** for build tooling
 - Plain CSS (dark theme)
 - ESLint + Prettier (Airbnb style)
+- Github Actions / Github Pages (Custom Domain)
 
 ## License
 
-Private — built for AI developer tooling.
+Private — built for AI developer fun.
