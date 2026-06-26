@@ -67,7 +67,7 @@ header p {
   border-radius: 8px;
   padding: 10px;
   font-size: 2em;
-cursor: pointer;
+  cursor: pointer;
   transition: all 0.2s ease-in-out;
   display: flex;
   justify-content: center;
@@ -76,6 +76,12 @@ cursor: pointer;
 
 .emoji-button:hover {
   background-color: #4a4a6a;
+  transform: scale(1.05);
+}
+
+.emoji-button:focus-visible {
+  outline: 3px solid #00bcd4;
+  outline-offset: 2px;
   transform: scale(1.05);
 }
 

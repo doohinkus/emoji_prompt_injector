@@ -18,6 +18,17 @@ module.exports = {
     project: './tsconfig.json',
   },
   plugins: ['react-refresh'],
+  overrides: [
+    {
+      files: ['src/vitest.setup.ts', 'src/**/__tests__/**'],
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          { devDependencies: true },
+        ],
+      },
+    },
+  ],
   rules: {
     'react-refresh/only-export-components': 'warn',
     'react/react-in-jsx-scope': 'off',

@@ -1,19 +1,25 @@
-import { useState, useMemo } from 'react'
-import EMOJI_LIST from './components/EmojiData'
+import { useState, useMemo, useCallback, useRef } from 'react'
+import EMOJI_LIST, { type EmojiItem } from './components/EmojiData'
 import encodeSecretInEmoji from './utils/emojiEncoder'
 import { LLMOptimizedEncoder } from './utils/llmOptimizedEncoder'
 
-// Developer switch to choose which encoder to use
-const USE_LLM_OPTIMIZED_ENCODER = true // Set to false to use the original encoder
+const USE_LLM_OPTIMIZED_ENCODER = true
+
+function getInitialFocusIndex(): number {
+  return EMOJI_LIST.findIndex((item) => item.emoji === '✨')
+}
 
 function App() {
-  const [selectedEmoji, setSelectedEmoji] = useState<string | null>('✨')
+  const [selectedEmoji, setSelectedEmoji] = useState<string>('✨')
+  const [focusableIndex, setFocusableIndex] =
+    useState<number>(getInitialFocusIndex)
   const [prompt, setPrompt] = useState<string>('')
   const [copyButtonText, setCopyButtonText] = useState('Copy')
   const [encodingError, setEncodingError] = useState<string | null>(null)
+  const emojiRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const injectedPrompt = useMemo(() => {
-    setEncodingError(null) // Clear previous errors
+    setEncodingError(null)
     if (!selectedEmoji) {
       return ''
     }
@@ -23,15 +29,10 @@ function App() {
     try {
       let encoded: string
       if (USE_LLM_OPTIMIZED_ENCODER) {
-        // Use the LLM Optimized Encoder
-        // The LLMOptimizedEncoder's 'emoji' config is for internal markers, not the UI selected emoji.
-        // We will prepend the selectedEmoji after encoding, similar to the original encoder.
-        const llmEncoder = new LLMOptimizedEncoder() // Initialize without emoji config
+        const llmEncoder = new LLMOptimizedEncoder()
         const llmEncodedMessage = llmEncoder.encode(prompt)
-        encoded = selectedEmoji + llmEncodedMessage // Prepend selectedEmoji
+        encoded = selectedEmoji + llmEncodedMessage
       } else {
-        // Use the original encoder
-        // Note: encodeSecretInEmoji expects message first, then emoji
         encoded = encodeSecretInEmoji(prompt, selectedEmoji)
       }
       return encoded
@@ -41,7 +42,7 @@ function App() {
       } else {
         setEncodingError('An unknown error occurred during encoding.')
       }
-      return selectedEmoji // Fallback to just emoji on error
+      return selectedEmoji
     }
   }, [selectedEmoji, prompt])
 
@@ -52,6 +53,53 @@ function App() {
     })
   }
 
+  const handleEmojiKeyDown = useCallback(
+    (e: React.KeyboardEvent, index: number) => {
+      let newIndex = index
+      const cols = 6
+
+      switch (e.key) {
+        case 'ArrowRight':
+          newIndex = (index + 1) % EMOJI_LIST.length
+          break
+        case 'ArrowLeft':
+          newIndex = (index - 1 + EMOJI_LIST.length) % EMOJI_LIST.length
+          break
+        case 'ArrowDown':
+          newIndex = Math.min(index + cols, EMOJI_LIST.length - 1)
+          break
+        case 'ArrowUp':
+          newIndex = Math.max(index - cols, 0)
+          break
+        case 'Home':
+          newIndex = 0
+          break
+        case 'End':
+          newIndex = EMOJI_LIST.length - 1
+          break
+        default:
+          return
+      }
+
+      e.preventDefault()
+      setFocusableIndex(newIndex)
+      emojiRefs.current[newIndex]?.focus()
+    },
+    [],
+  )
+
+  const handleEmojiClick = useCallback((emoji: string, index: number) => {
+    setSelectedEmoji(emoji)
+    setFocusableIndex(index)
+  }, [])
+
+  const setEmojiRef = useCallback(
+    (index: number) => (el: HTMLButtonElement | null) => {
+      emojiRefs.current[index] = el
+    },
+    [],
+  )
+
   return (
     <div id="root">
       <header>
@@ -60,27 +108,34 @@ function App() {
       </header>
 
       <main>
-        {/* Emoji Selector */}
         <div className="section-container">
-          <h2>1. Select an Emoji</h2>
-          <div className="emoji-grid">
-            {EMOJI_LIST.map((emoji) => (
+          <h2 id="emoji-grid-label">1. Select an Emoji</h2>
+          <div
+            className="emoji-grid"
+            role="listbox"
+            aria-labelledby="emoji-grid-label"
+          >
+            {EMOJI_LIST.map((item: EmojiItem, index: number) => (
               <button
-                key={emoji}
+                key={item.emoji}
                 type="button"
-                onClick={() => setSelectedEmoji(emoji)}
+                ref={setEmojiRef(index)}
+                tabIndex={index === focusableIndex ? 0 : -1}
+                onClick={() => handleEmojiClick(item.emoji, index)}
+                onKeyDown={(e) => handleEmojiKeyDown(e, index)}
                 className={`emoji-button ${
-                  selectedEmoji === emoji ? 'selected' : ''
+                  selectedEmoji === item.emoji ? 'selected' : ''
                 }`}
-                aria-label={`Select emoji ${emoji}`}
+                role="option"
+                aria-selected={selectedEmoji === item.emoji}
+                aria-label={item.label}
               >
-                {emoji}
+                {item.emoji}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Prompt Input */}
         <div className="section-container">
           <h2>2. Enter Prompt</h2>
           <textarea
@@ -88,11 +143,11 @@ function App() {
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Enter your AI prompt here (A-Z, 0-9, space only)..."
             className="textarea-input"
+            aria-label="Enter prompt"
           />
           {encodingError && <p className="error-message">{encodingError}</p>}
         </div>
 
-        {/* Output Display */}
         <div className="section-container">
           <h2>3. Copy Result</h2>
           <div className="copy-button-container">
