@@ -11,7 +11,9 @@ describe('ExplicitLLMEncoder', () => {
       const result = encoder.encodeWithInstructions('test prompt')
       expect(result).toContain('CONTAINS_ENCODED_PROMPT')
       expect(result).toContain('[DECODING_METHOD')
-      expect(result).toContain('[DECODED_TEXT_START]test prompt[DECODED_TEXT_END]')
+      expect(result).toContain(
+        '[DECODED_TEXT_START]test prompt[DECODED_TEXT_END]',
+      )
     })
   })
 

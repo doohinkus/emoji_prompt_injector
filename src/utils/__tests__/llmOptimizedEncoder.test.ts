@@ -27,7 +27,7 @@ describe('LLMOptimizedEncoder', () => {
     it('includes default empty string prefix', () => {
       const encoder = new LLMOptimizedEncoder()
       const encoded = encoder.encode('test')
-      expect(encoded).not.toMatch(/^[🔄⚙️]/u)
+      expect(encoded).not.toMatch(/^(?:🔄|⚙️)/u)
     })
 
     it('decode preserves non-tag plain text', () => {
@@ -106,7 +106,7 @@ describe('LLMOptimizedEncoder', () => {
       const encoder = new LLMOptimizedEncoder()
       const a = encoder.encode('first')
       const b = encoder.encode('second')
-      const combined = a + ' plain ' + b
+      const combined = `${a} plain ${b}`
       const messages = encoder.extractAllEncoded(combined)
       expect(messages).toEqual(['first', 'second'])
     })
@@ -115,7 +115,10 @@ describe('LLMOptimizedEncoder', () => {
   describe('createPromptPattern', () => {
     it('returns correct structure', () => {
       const encoder = new LLMOptimizedEncoder()
-      const pattern = encoder.createPromptPattern('system prompt', 'user prompt')
+      const pattern = encoder.createPromptPattern(
+        'system prompt',
+        'user prompt',
+      )
       expect(pattern).toHaveProperty('system')
       expect(pattern).toHaveProperty('user', 'user prompt')
       expect(pattern).toHaveProperty('instruction')
